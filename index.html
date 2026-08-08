@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#10202f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Cykelvejr">
+  <title>Cykelvejr – Enkel</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div>
+        <div class="kicker">CYKELVEJR · NØRHOLM</div>
+        <h1 id="overallText">Henter dagens cykelvejr…</h1>
+      </div>
+      <div class="header-right">
+        <div id="today"></div>
+        <button id="refreshBtn">↻</button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div id="heroIcon" class="hero-icon">⏳</div>
+      <div>
+        <div class="hero-label">SAMLET VURDERING</div>
+        <div id="heroScore" class="hero-score">–</div>
+        <div id="heroReason" class="hero-reason">Temperatur, vind og regn vurderes.</div>
+      </div>
+    </section>
+
+    <section class="people">
+      <article class="person-card">
+        <div class="person-head">
+          <div>
+            <h2>Peter</h2>
+            <div class="route">Nørholm ↔ Aalborg SV</div>
+          </div>
+          <div id="peterStatus" class="status-pill neutral">–</div>
+        </div>
+
+        <div class="periods">
+          <div class="period">
+            <div class="period-title">🌅 Morgen <span>07.15–08.15</span></div>
+            <div id="peterMorning" class="simple-metrics">Henter…</div>
+          </div>
+          <div class="period">
+            <div class="period-title">🏠 Hjem <span>13.00–16.00</span></div>
+            <div id="peterHome" class="simple-metrics">Henter…</div>
+          </div>
+        </div>
+
+        <button class="clothes" data-clothes="peter">🧥 Påklædning</button>
+      </article>
+
+      <article class="person-card">
+        <div class="person-head">
+          <div>
+            <h2>Charlie</h2>
+            <div class="route">Nørholm ↔ Sønderholm</div>
+          </div>
+          <div id="sonStatus" class="status-pill neutral">–</div>
+        </div>
+
+        <div class="periods">
+          <div class="period">
+            <div class="period-title">🌅 Morgen <span>07.15–08.15</span></div>
+            <div id="sonMorning" class="simple-metrics">Henter…</div>
+          </div>
+          <div class="period">
+            <div class="period-title">🏠 Hjem <span>13.00–16.00</span></div>
+            <div id="sonHome" class="simple-metrics">Henter…</div>
+          </div>
+        </div>
+
+        <button class="clothes" data-clothes="son">🧥 Påklædning</button>
+      </article>
+    </section>
+
+    <footer>
+      <span id="updated">Ikke opdateret endnu</span>
+      <span>Open‑Meteo</span>
+    </footer>
+  </main>
+
+  <dialog id="clothesDialog">
+    <div class="dialog-card">
+      <button id="closeDialog" class="close">×</button>
+      <div class="dialog-label">PÅKLÆDNINGSFORSLAG</div>
+      <h2 id="clothesTitle"></h2>
+      <div id="clothesWeather" class="dialog-weather"></div>
+      <div id="clothesContent" class="clothes-list"></div>
+    </div>
+  </dialog>
+
+  <script src="./app.js"></script>
+</body>
+</html>
