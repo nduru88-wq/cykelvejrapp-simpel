@@ -1,0 +1,78 @@
+:root{
+  --bg:#0c1825;--panel:#13283c;--text:#f5f9fc;--muted:#afc1cf;--line:rgba(255,255,255,.12);
+  --good:#4bd37b;--okay:#f1c84a;--bad:#ff6b6b;--skin:#9b5d34;--hair:#1d1714;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+body{min-height:100vh} button{font:inherit}
+.app-shell{min-height:100vh;padding:20px 24px 14px;display:flex;flex-direction:column;gap:16px;background:linear-gradient(180deg,#0e1d2b,#0a1520)}
+.summary-card{border:1px solid var(--line);border-radius:24px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:18px;box-shadow:0 12px 30px rgba(0,0,0,.18);transition:.25s}
+.summary-green{background:linear-gradient(135deg,#155f39,#1e7a49)} .summary-yellow{background:linear-gradient(135deg,#796514,#9a7d17)} .summary-red{background:linear-gradient(135deg,#7b2828,#9c3434)} .summary-neutral{background:linear-gradient(135deg,#17324d,#1e405c)}
+.summary-left{display:flex;align-items:center;gap:16px}.summary-title{font-size:13px;letter-spacing:.08em;font-weight:900;color:rgba(255,255,255,.88)}
+.overall-text{font-size:30px;font-weight:950;margin-top:3px}.summary-details{font-size:15px;color:rgba(255,255,255,.88);margin-top:3px}.today{font-size:18px;font-weight:800;text-align:right;white-space:nowrap}
+
+.weather-animation{width:72px;height:58px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.weather-animation>div{display:none}
+.weather-animation.sun .sun-disc{display:block;font-size:46px;animation:pulse 1.8s ease-in-out infinite}.weather-animation.rain .rain-cloud{display:block;font-size:46px;animation:rainBob 1.2s ease-in-out infinite}
+.weather-animation.snow .snow-symbol{display:block;font-size:46px;animation:snowBob 1.5s ease-in-out infinite}
+.weather-animation.wind .wind-symbol{display:block;position:relative;width:58px;height:40px}
+.weather-animation.wind .wind-symbol span{position:absolute;right:0;height:4px;border-radius:99px;background:#eaf7ff;animation:airflow 1.5s ease-in-out infinite}
+.weather-animation.wind .wind-symbol span:nth-child(1){top:6px;width:46px}.weather-animation.wind .wind-symbol span:nth-child(2){top:18px;width:58px;animation-delay:.18s}.weather-animation.wind .wind-symbol span:nth-child(3){top:30px;width:38px;animation-delay:.35s}
+@keyframes airflow{0%,100%{transform:translateX(-6px);opacity:.45}50%{transform:translateX(7px);opacity:1}}@keyframes pulse{50%{transform:scale(1.13)}}@keyframes rainBob{50%{transform:translateY(4px)}}@keyframes snowBob{50%{transform:translateY(4px) rotate(4deg)}}
+
+.profiles{display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1}.profile-card{background:rgba(19,40,60,.94);border:1px solid var(--line);border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.profile-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.profile-name{font-size:28px;font-weight:950}.route{color:var(--muted);font-size:14px;margin-top:2px}
+.score-badge{border-radius:999px;padding:9px 13px;font-weight:950}.score-badge.good{background:rgba(75,211,123,.16);color:#79e69c}.score-badge.okay{background:rgba(241,200,74,.16);color:#ffe179}.score-badge.bad{background:rgba(255,107,107,.16);color:#ff9292}.score-badge.neutral{background:rgba(255,255,255,.08);color:#c7d4dc}
+
+.trip-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1}.trip{border-radius:18px;padding:12px;min-width:0;position:relative;overflow:hidden;transition:.25s}
+.trip-green{background:linear-gradient(180deg,rgba(41,121,73,.96),rgba(31,99,58,.96))}.trip-yellow{background:linear-gradient(180deg,rgba(132,106,27,.96),rgba(105,84,22,.96))}.trip-red{background:linear-gradient(180deg,rgba(131,51,51,.96),rgba(105,39,39,.96))}.trip-neutral{background:rgba(255,255,255,.05);border:1px solid var(--line)}
+
+.trip-overlay{cursor:pointer;min-height:292px;display:flex;flex-direction:column;align-items:stretch}
+.front-title{display:flex;flex-direction:column;gap:2px}.front-title strong{font-size:19px}.front-title span{font-size:13px;color:rgba(255,255,255,.82)}
+.front-scene{position:relative;height:175px;margin-top:4px}
+.static-weather{position:absolute;left:8px;top:16px;width:78px;height:78px;z-index:5}
+.static-weather::before{position:absolute;left:0;top:0;font-size:49px}
+.static-weather.sun::before{content:"☀️";animation:weatherPulse 1.8s ease-in-out infinite}
+.static-weather.rain::before{content:"🌧️";animation:weatherPulse 1.4s ease-in-out infinite}
+.static-weather.snow::before{content:"🌨️";animation:weatherPulse 1.5s ease-in-out infinite}
+.static-weather.wind{display:flex;flex-direction:column;gap:10px;padding-top:12px}
+.static-weather.wind::before,.static-weather.wind::after,.static-weather.wind span{content:"";display:block;height:5px;border-radius:99px;background:rgba(240,250,255,.92);animation:windStill 1.4s ease-in-out infinite}
+.static-weather.wind::before{width:55px}.static-weather.wind::after{width:72px;animation-delay:.2s}
+@keyframes windStill{0%,100%{transform:translateX(-5px);opacity:.5}50%{transform:translateX(6px);opacity:1}}@keyframes weatherPulse{50%{transform:scale(1.08)}}
+
+.rider{position:absolute;left:50%;top:2px;width:230px;height:165px;transform:translateX(-50%);transform-origin:center}
+.rider.facing-left{transform:translateX(-50%) scaleX(-1)}
+.rider .bike{position:absolute;inset:0}
+.wheel{position:absolute;bottom:4px;width:72px;height:72px;border:7px solid #182028;border-radius:50%;background:transparent}
+.wheel::after{content:"";position:absolute;inset:7px;border:2px dashed rgba(255,255,255,.45);border-radius:50%;animation:wheelSpin 1.1s linear infinite}
+.wheel-a{left:22px}.wheel-b{right:20px}
+.frame{position:absolute;height:6px;background:#172028;border-radius:99px;transform-origin:left center}
+.f1{left:58px;bottom:42px;width:68px;transform:rotate(-3deg)}.f2{left:59px;bottom:42px;width:62px;transform:rotate(-56deg)}.f3{left:89px;bottom:92px;width:70px;transform:rotate(58deg)}.f4{left:117px;bottom:44px;width:62px;transform:rotate(-52deg)}
+.handle{position:absolute;left:156px;bottom:101px;width:31px;height:6px;background:#172028;transform:rotate(8deg);border-radius:99px}.seat{position:absolute;left:91px;bottom:100px;width:30px;height:7px;background:#172028;border-radius:99px}
+.pedal{position:absolute;left:105px;bottom:35px;width:24px;height:24px;border:4px solid #172028;border-radius:50%;animation:pedalSpin .8s linear infinite}
+.person{position:absolute;left:78px;top:5px;width:105px;height:125px;animation:bodyBob .8s ease-in-out infinite}
+.head{position:absolute;left:40px;top:2px;width:35px;height:38px;background:var(--skin);border-radius:48% 48% 52% 52%;z-index:4}
+.hair{position:absolute;left:38px;top:-1px;width:38px;height:17px;background:var(--hair);border-radius:55% 55% 35% 35%;z-index:5}
+.body{position:absolute;left:27px;top:37px;width:50px;height:57px;background:#26303a;border-radius:16px 16px 10px 10px;transform:rotate(13deg)}
+.arm{position:absolute;left:61px;top:50px;width:57px;height:10px;background:var(--skin);border-radius:10px;transform:rotate(24deg);transform-origin:left center}
+.leg{position:absolute;left:41px;top:86px;width:62px;height:12px;background:#1d2630;border-radius:10px;transform-origin:left center}
+.leg-a{animation:legA .8s linear infinite}.leg-b{animation:legB .8s linear infinite}
+.youth{transform-origin:center;scale:.9}.youth.facing-left{transform:translateX(-50%) scaleX(-1) scale(.9)}
+.youth .head{width:33px;height:35px}.youth .body{width:45px;height:52px;background:#31445a}.youth .hair{width:36px}
+@keyframes wheelSpin{to{transform:rotate(360deg)}}@keyframes pedalSpin{to{transform:rotate(360deg)}}@keyframes bodyBob{0%,100%{transform:translateY(0)}50%{transform:translateY(2px)}}@keyframes legA{0%,100%{transform:rotate(28deg)}50%{transform:rotate(-8deg)}}@keyframes legB{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(28deg)}}
+
+.front-score{text-align:center;margin-top:-4px}.front-score span{display:block;font-size:34px;font-weight:950}.front-score small{display:block;font-size:17px;font-weight:850}.tap-hint{text-align:center;font-size:12px;color:rgba(255,255,255,.78);margin-top:3px}
+
+.trip-details{min-height:292px;display:flex;flex-direction:column;justify-content:space-between;gap:10px}.hidden{display:none!important}
+.detail-head{display:flex;flex-direction:column;gap:2px}.detail-head strong{font-size:18px}.detail-head span{font-size:12px;color:rgba(255,255,255,.8)}
+.weather-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.metric{background:rgba(255,255,255,.10);border-radius:12px;padding:9px}.metric .label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.75);font-weight:850}.metric .value{font-size:18px;font-weight:950;margin-top:2px}
+.metric .value.good{color:#91f0ad}.metric .value.okay{color:#ffe886}.metric .value.bad{color:#ffadad}
+.back-btn{border:0;border-radius:12px;padding:10px;background:rgba(255,255,255,.92);color:#183149;font-weight:900;cursor:pointer}
+.clothes-btn{border:0;border-radius:15px;padding:13px 15px;background:#eef7fc;color:#15314a;font-weight:950;font-size:17px;cursor:pointer}
+
+footer{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#7894a8;font-size:12px}.refresh-btn{border:0;border-radius:12px;padding:9px 12px;background:rgba(255,255,255,.08);color:#d7e8f2;font-weight:850;cursor:pointer}
+
+dialog{border:0;padding:0;background:transparent;max-width:min(700px,92vw);width:100%}dialog::backdrop{background:rgba(0,0,0,.68)}
+.dialog-card{position:relative;background:#f6fbfe;color:#15314a;border-radius:24px;padding:28px}.close-btn{position:absolute;right:18px;top:18px;border:0;border-radius:14px;width:46px;height:46px;background:#dceaf2;color:#17324d;font-size:26px}
+.small-label{font-size:12px;letter-spacing:.12em;color:#6d8797;font-weight:900}.dialog-card h2{font-size:30px;margin:4px 50px 8px 0}.clothes-weather{color:#547083;margin-bottom:16px}.clothes-content{display:grid;grid-template-columns:1fr 1fr;gap:9px}.clothing-item{background:#eaf4f9;border-radius:14px;padding:12px 14px;font-weight:800}
+
+@media(max-width:900px),(orientation:portrait){.profiles{grid-template-columns:1fr}.app-shell{padding:14px}.summary-card{align-items:flex-start}.today{font-size:14px}}
