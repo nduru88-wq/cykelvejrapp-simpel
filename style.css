@@ -1,0 +1,724 @@
+:root{
+  --bg:#0c1825;--panel:#13283c;--text:#f5f9fc;--muted:#afc1cf;--line:rgba(255,255,255,.12);
+  --good:#4bd37b;--okay:#f1c84a;--bad:#ff6b6b;--skin:#9b5d34;--hair:#1d1714;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+body{min-height:100vh} button{font:inherit}
+.app-shell{min-height:100vh;padding:20px 24px 14px;display:flex;flex-direction:column;gap:16px;background:linear-gradient(180deg,#0e1d2b,#0a1520)}
+.summary-card{border:1px solid var(--line);border-radius:24px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:18px;box-shadow:0 12px 30px rgba(0,0,0,.18);transition:.25s}
+.summary-green{background:linear-gradient(135deg,#155f39,#1e7a49)} .summary-yellow{background:linear-gradient(135deg,#796514,#9a7d17)} .summary-red{background:linear-gradient(135deg,#7b2828,#9c3434)} .summary-neutral{background:linear-gradient(135deg,#17324d,#1e405c)}
+.summary-left{display:flex;align-items:center;gap:16px}.summary-title{font-size:13px;letter-spacing:.08em;font-weight:900;color:rgba(255,255,255,.88)}
+.overall-text{font-size:30px;font-weight:950;margin-top:3px}.summary-details{font-size:15px;color:rgba(255,255,255,.88);margin-top:3px}.today{font-size:18px;font-weight:800;text-align:right;white-space:nowrap}
+
+.weather-animation{width:72px;height:58px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.weather-animation>div{display:none}
+.weather-animation.sun .sun-disc{display:block;font-size:46px;animation:pulse 1.8s ease-in-out infinite}.weather-animation.rain .rain-cloud{display:block;font-size:46px;animation:rainBob 1.2s ease-in-out infinite}
+.weather-animation.snow .snow-symbol{display:block;font-size:46px;animation:snowBob 1.5s ease-in-out infinite}
+.weather-animation.wind .wind-symbol{display:block;position:relative;width:58px;height:40px}
+.weather-animation.wind .wind-symbol span{position:absolute;right:0;height:4px;border-radius:99px;background:#eaf7ff;animation:airflow 1.5s ease-in-out infinite}
+.weather-animation.wind .wind-symbol span:nth-child(1){top:6px;width:46px}.weather-animation.wind .wind-symbol span:nth-child(2){top:18px;width:58px;animation-delay:.18s}.weather-animation.wind .wind-symbol span:nth-child(3){top:30px;width:38px;animation-delay:.35s}
+@keyframes airflow{0%,100%{transform:translateX(-6px);opacity:.45}50%{transform:translateX(7px);opacity:1}}@keyframes pulse{50%{transform:scale(1.13)}}@keyframes rainBob{50%{transform:translateY(4px)}}@keyframes snowBob{50%{transform:translateY(4px) rotate(4deg)}}
+
+.profiles{display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1}.profile-card{background:rgba(19,40,60,.94);border:1px solid var(--line);border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.profile-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.profile-name{font-size:28px;font-weight:950}.route{color:var(--muted);font-size:14px;margin-top:2px}
+.score-badge{border-radius:999px;padding:9px 13px;font-weight:950}.score-badge.good{background:rgba(75,211,123,.16);color:#79e69c}.score-badge.okay{background:rgba(241,200,74,.16);color:#ffe179}.score-badge.bad{background:rgba(255,107,107,.16);color:#ff9292}.score-badge.neutral{background:rgba(255,255,255,.08);color:#c7d4dc}
+
+.trip-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1}.trip{border-radius:18px;padding:12px;min-width:0;position:relative;overflow:hidden;transition:.25s}
+.trip-green{background:linear-gradient(180deg,rgba(41,121,73,.96),rgba(31,99,58,.96))}.trip-yellow{background:linear-gradient(180deg,rgba(132,106,27,.96),rgba(105,84,22,.96))}.trip-red{background:linear-gradient(180deg,rgba(131,51,51,.96),rgba(105,39,39,.96))}.trip-neutral{background:rgba(255,255,255,.05);border:1px solid var(--line)}
+
+.trip-overlay{cursor:pointer;min-height:292px;display:flex;flex-direction:column;align-items:stretch}
+.front-title{display:flex;flex-direction:column;gap:2px}.front-title strong{font-size:19px}.front-title span{font-size:13px;color:rgba(255,255,255,.82)}
+.front-scene{position:relative;height:180px;margin-top:4px}
+.static-weather{position:absolute;left:8px;top:16px;width:78px;height:78px;z-index:5}
+.static-weather::before{position:absolute;left:0;top:0;font-size:49px}
+.static-weather.sun::before{content:"☀️";animation:weatherPulse 1.8s ease-in-out infinite}
+.static-weather.rain::before{content:"🌧️";animation:weatherPulse 1.4s ease-in-out infinite}
+.static-weather.snow::before{content:"🌨️";animation:weatherPulse 1.5s ease-in-out infinite}
+.static-weather.wind{display:flex;flex-direction:column;gap:10px;padding-top:12px}
+.static-weather.wind::before,.static-weather.wind::after,.static-weather.wind span{content:"";display:block;height:5px;border-radius:99px;background:rgba(240,250,255,.92);animation:windStill 1.4s ease-in-out infinite}
+.static-weather.wind::before{width:55px}.static-weather.wind::after{width:72px;animation-delay:.2s}
+@keyframes windStill{0%,100%{transform:translateX(-5px);opacity:.5}50%{transform:translateX(6px);opacity:1}}@keyframes weatherPulse{50%{transform:scale(1.08)}}
+
+
+/* Statiske, mere naturtro cykelryttere */
+.static-rider{
+  position:absolute;
+  left:50%;
+  top:3px;
+  width:auto;
+  height:170px;
+  object-fit:contain;
+  transform:translateX(-50%);
+  transform-origin:center center;
+  z-index:3;
+  filter:drop-shadow(0 7px 8px rgba(0,0,0,.18));
+  pointer-events:none;
+  user-select:none;
+}
+.static-rider.facing-left{
+  transform:translateX(-50%) scaleX(-1);
+}
+.static-rider.charlie{
+  height:158px;
+  top:9px;
+}
+.static-rider.charlie.facing-left{
+  transform:translateX(-50%) scaleX(-1);
+}
+
+
+.front-score{text-align:center;margin-top:-4px}.front-score span{display:block;font-size:34px;font-weight:950}.front-score small{display:block;font-size:17px;font-weight:850}.tap-hint{text-align:center;font-size:12px;color:rgba(255,255,255,.78);margin-top:3px}
+
+.trip-details{min-height:292px;display:flex;flex-direction:column;justify-content:space-between;gap:10px}.hidden{display:none!important}
+.detail-head{display:flex;flex-direction:column;gap:2px}.detail-head strong{font-size:18px}.detail-head span{font-size:12px;color:rgba(255,255,255,.8)}
+.weather-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.metric{background:rgba(255,255,255,.10);border-radius:12px;padding:9px}.metric .label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.75);font-weight:850}.metric .value{font-size:18px;font-weight:950;margin-top:2px}
+.metric .value.good{color:#91f0ad}.metric .value.okay{color:#ffe886}.metric .value.bad{color:#ffadad}
+.back-btn{border:0;border-radius:12px;padding:10px;background:rgba(255,255,255,.92);color:#183149;font-weight:900;cursor:pointer}
+.clothes-btn{border:0;border-radius:15px;padding:13px 15px;background:#eef7fc;color:#15314a;font-weight:950;font-size:17px;cursor:pointer}
+
+footer{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#7894a8;font-size:12px}.refresh-btn{border:0;border-radius:12px;padding:9px 12px;background:rgba(255,255,255,.08);color:#d7e8f2;font-weight:850;cursor:pointer}
+
+dialog{border:0;padding:0;background:transparent;max-width:min(700px,92vw);width:100%}dialog::backdrop{background:rgba(0,0,0,.68)}
+.dialog-card{position:relative;background:#f6fbfe;color:#15314a;border-radius:24px;padding:28px}.close-btn{position:absolute;right:18px;top:18px;border:0;border-radius:14px;width:46px;height:46px;background:#dceaf2;color:#17324d;font-size:26px}
+.small-label{font-size:12px;letter-spacing:.12em;color:#6d8797;font-weight:900}.dialog-card h2{font-size:30px;margin:4px 50px 8px 0}.clothes-weather{color:#547083;margin-bottom:16px}.clothes-content{display:grid;grid-template-columns:1fr 1fr;gap:9px}.clothing-item{background:#eaf4f9;border-radius:14px;padding:12px 14px;font-weight:800}
+
+@media(max-width:900px),(orientation:portrait){.profiles{grid-template-columns:1fr}.app-shell{padding:14px}.summary-card{align-items:flex-start}.today{font-size:14px}}
+
+
+/* =========================================================
+   DAGNAVIGATION + UGEOVERSIGT
+   ========================================================= */
+
+.summary-card{
+  position:relative;
+  padding:14px 168px;
+  min-height:128px;
+}
+
+.summary-center{
+  width:100%;
+  min-width:0;
+}
+
+.summary-daily{
+  width:100%;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  align-items:center;
+  gap:18px;
+}
+
+.day-nav{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:4;
+  border:1px solid rgba(255,255,255,.24);
+  border-radius:16px;
+  background:rgba(0,0,0,.14);
+  color:#fff;
+  padding:10px 13px;
+  min-width:132px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  font-size:14px;
+  font-weight:900;
+  cursor:pointer;
+  transition:transform .15s ease,background .15s ease;
+}
+
+.day-nav:hover{
+  background:rgba(255,255,255,.12);
+}
+
+.day-nav:active{
+  transform:translateY(-50%) scale(.97);
+}
+
+.day-nav-prev{left:16px}
+.day-nav-next{right:16px}
+
+.day-nav-arrow{
+  font-size:24px;
+  line-height:1;
+}
+
+.week-toggle-btn{
+  border:1px solid rgba(255,255,255,.35);
+  border-radius:14px;
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  padding:10px 14px;
+  font-weight:950;
+  white-space:nowrap;
+  cursor:pointer;
+}
+
+.week-toggle-btn:hover{
+  background:rgba(255,255,255,.20);
+}
+
+.week-summary{
+  width:100%;
+}
+
+.week-summary-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:8px;
+}
+
+.week-title{
+  font-size:19px;
+  font-weight:950;
+  margin-top:2px;
+}
+
+.week-days{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:8px;
+}
+
+.week-day{
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:14px;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  padding:8px 10px;
+  min-width:0;
+  display:grid;
+  grid-template-columns:1fr auto;
+  grid-template-areas:
+    "name icon"
+    "score score";
+  align-items:center;
+  gap:2px 8px;
+  text-align:left;
+  cursor:pointer;
+}
+
+.week-day:hover{
+  background:rgba(255,255,255,.15);
+}
+
+.week-day.selected{
+  outline:2px solid rgba(255,255,255,.85);
+  outline-offset:1px;
+}
+
+.week-day.good{background:rgba(36,119,67,.62)}
+.week-day.okay{background:rgba(132,106,27,.70)}
+.week-day.bad{background:rgba(131,51,51,.70)}
+.week-day.neutral{background:rgba(255,255,255,.08)}
+
+.week-day-name{
+  grid-area:name;
+  font-size:13px;
+  font-weight:950;
+  white-space:nowrap;
+}
+
+.week-day-icon{
+  grid-area:icon;
+  font-size:20px;
+}
+
+.week-day-score{
+  grid-area:score;
+  font-size:19px;
+  font-weight:950;
+  margin-top:1px;
+}
+
+.week-day-score small{
+  font-size:11px;
+  font-weight:800;
+  opacity:.82;
+  margin-left:5px;
+}
+
+@media(max-width:1100px){
+  .summary-card{
+    padding-left:132px;
+    padding-right:132px;
+  }
+
+  .day-nav{
+    min-width:106px;
+    font-size:12px;
+    padding:9px 9px;
+  }
+
+  .summary-daily{
+    grid-template-columns:minmax(0,1fr) auto;
+  }
+
+  .summary-daily .today{
+    grid-column:1 / -1;
+    text-align:center;
+  }
+}
+
+@media(max-width:900px),(orientation:portrait){
+  .summary-card{
+    padding:78px 12px 14px;
+  }
+
+  .day-nav{
+    top:12px;
+    transform:none;
+    min-width:0;
+    width:calc(50% - 18px);
+  }
+
+  .day-nav:active{
+    transform:scale(.97);
+  }
+
+  .day-nav-prev{left:12px}
+  .day-nav-next{right:12px}
+
+  .summary-daily{
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    gap:10px;
+  }
+
+  .summary-left{
+    align-items:flex-start;
+  }
+
+  .today{
+    text-align:center;
+  }
+
+  .week-summary-top{
+    align-items:flex-start;
+  }
+
+  .week-days{
+    grid-template-columns:1fr;
+  }
+
+  .week-day{
+    grid-template-columns:1fr auto auto;
+    grid-template-areas:"name score icon";
+  }
+
+  .week-day-score{
+    margin:0;
+    font-size:16px;
+  }
+}
+
+
+/* =========================================================
+   UGEVISNING V2 – FYLDER HELE INDHOLDSFELTET
+   ========================================================= */
+
+.summary-card{
+  position:relative;
+  min-height:142px;
+  padding:16px 168px;
+}
+
+.summary-center{
+  width:100%;
+  min-width:0;
+}
+
+.summary-mainline{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  width:100%;
+}
+
+.summary-left{
+  min-width:0;
+  flex:1;
+}
+
+.summary-copy{
+  min-width:0;
+  flex:1;
+}
+
+.summary-score-row{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:18px;
+  margin-top:3px;
+}
+
+.today-large{
+  font-size:30px;
+  line-height:1.05;
+  font-weight:950;
+  text-align:right;
+  white-space:nowrap;
+}
+
+.week-toggle-btn{
+  flex:0 0 auto;
+}
+
+.week-view{
+  flex:1;
+  min-height:0;
+  background:rgba(19,40,60,.94);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.week-view-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+
+.week-view-kicker{
+  font-size:13px;
+  letter-spacing:.08em;
+  font-weight:900;
+  color:rgba(255,255,255,.72);
+}
+
+.week-view-title{
+  font-size:30px;
+  font-weight:950;
+  margin-top:2px;
+}
+
+.week-cards{
+  flex:1;
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:14px;
+  min-height:0;
+}
+
+.week-day{
+  position:relative;
+  min-height:0;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:20px;
+  padding:18px 16px;
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:12px;
+  text-align:center;
+  cursor:pointer;
+  transition:transform .15s ease,filter .15s ease;
+}
+
+.week-day:hover{
+  transform:translateY(-2px);
+  filter:brightness(1.06);
+}
+
+.week-day.selected{
+  outline:3px solid rgba(255,255,255,.92);
+  outline-offset:2px;
+}
+
+.week-day.good{background:linear-gradient(180deg,rgba(41,121,73,.98),rgba(31,99,58,.98))}
+.week-day.okay{background:linear-gradient(180deg,rgba(132,106,27,.98),rgba(105,84,22,.98))}
+.week-day.bad{background:linear-gradient(180deg,rgba(131,51,51,.98),rgba(105,39,39,.98))}
+.week-day.neutral{background:rgba(255,255,255,.06)}
+
+.week-day-name{
+  font-size:24px;
+  font-weight:950;
+  line-height:1.1;
+}
+
+.week-day-icon{
+  font-size:48px;
+  line-height:1;
+}
+
+.week-day-score{
+  font-size:34px;
+  font-weight:950;
+  line-height:1;
+}
+
+.week-day-score small{
+  display:block;
+  margin-top:8px;
+  font-size:18px;
+  font-weight:850;
+  opacity:.92;
+}
+
+.week-back-btn{
+  min-width:170px;
+}
+
+@media(max-width:1100px){
+  .summary-card{
+    padding-left:132px;
+    padding-right:132px;
+  }
+
+  .summary-score-row{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:4px;
+  }
+
+  .today-large{
+    text-align:left;
+  }
+
+  .week-cards{
+    gap:10px;
+  }
+
+  .week-day{
+    padding:14px 10px;
+  }
+
+  .week-day-name{
+    font-size:20px;
+  }
+
+  .week-day-icon{
+    font-size:40px;
+  }
+
+  .week-day-score{
+    font-size:28px;
+  }
+}
+
+@media(max-width:900px),(orientation:portrait){
+  .summary-card{
+    padding:78px 12px 14px;
+  }
+
+  .summary-mainline{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .summary-score-row{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:5px;
+  }
+
+  .today-large{
+    font-size:26px;
+    text-align:left;
+    white-space:normal;
+  }
+
+  .week-view{
+    padding:14px;
+  }
+
+  .week-view-head{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .week-view-title{
+    font-size:26px;
+  }
+
+  .week-cards{
+    grid-template-columns:1fr;
+  }
+
+  .week-day{
+    min-height:105px;
+    display:grid;
+    grid-template-columns:1fr auto auto;
+    align-items:center;
+    text-align:left;
+    gap:10px;
+  }
+
+  .week-day-name{
+    font-size:22px;
+  }
+
+  .week-day-icon{
+    font-size:34px;
+  }
+
+  .week-day-score{
+    font-size:25px;
+    text-align:right;
+  }
+
+  .week-day-score small{
+    font-size:14px;
+    margin-top:4px;
+  }
+}
+
+
+/* =========================================================
+   STØRRE UGEKORT + PERSONFARVER + 10-TRINS SCOREFARVER
+   ========================================================= */
+
+/* Peter og Charlie får hver sin rolige baggrund i dagsvisningen. */
+.profile-card.profile-peter{
+  background:linear-gradient(180deg,rgba(18,53,79,.97),rgba(13,42,65,.97));
+}
+
+.profile-card.profile-charlie{
+  background:linear-gradient(180deg,rgba(63,45,79,.97),rgba(47,34,64,.97));
+}
+
+/* Ugekortenes tekst og symboler gøres tydeligere. */
+.week-day{
+  padding:24px 18px;
+  gap:16px;
+}
+
+.week-day-name{
+  font-size:30px;
+  line-height:1.08;
+}
+
+.week-day-icon{
+  font-size:62px;
+}
+
+.week-day-score{
+  font-size:42px;
+}
+
+.week-day-score small{
+  font-size:22px;
+  margin-top:10px;
+}
+
+/* Ensartet 10-trins scorefarve.
+   Høj score = grøn, midt = gul/orange, lav = rød. */
+.score-band-100{
+  background:linear-gradient(180deg,#8fe6a5,#70d78d)!important;
+  color:#102d19!important;
+}
+.score-band-90{
+  background:linear-gradient(180deg,#71d987,#59c975)!important;
+  color:#102d19!important;
+}
+.score-band-80{
+  background:linear-gradient(180deg,#4fbe6b,#3eaa59)!important;
+  color:#fff!important;
+}
+.score-band-70{
+  background:linear-gradient(180deg,#f4df78,#e8ca58)!important;
+  color:#3a3108!important;
+}
+.score-band-60{
+  background:linear-gradient(180deg,#e5c650,#d3ad32)!important;
+  color:#302606!important;
+}
+.score-band-50{
+  background:linear-gradient(180deg,#d79d43,#c78332)!important;
+  color:#fff!important;
+}
+.score-band-40{
+  background:linear-gradient(180deg,#e46658,#d34d42)!important;
+  color:#fff!important;
+}
+.score-band-30{
+  background:linear-gradient(180deg,#cc514b,#b53c38)!important;
+  color:#fff!important;
+}
+.score-band-20{
+  background:linear-gradient(180deg,#ac3d3d,#922f32)!important;
+  color:#fff!important;
+}
+.score-band-10{
+  background:linear-gradient(180deg,#873033,#702629)!important;
+  color:#fff!important;
+}
+.score-band-0{
+  background:linear-gradient(180deg,#62272a,#4b1e21)!important;
+  color:#fff!important;
+}
+.score-band-neutral{
+  background:rgba(255,255,255,.06)!important;
+  color:#fff!important;
+}
+
+/* Sørg for læsbar tekst på de lyse scoretrin. */
+.score-band-100 .front-title span,
+.score-band-100 .tap-hint,
+.score-band-90 .front-title span,
+.score-band-90 .tap-hint,
+.score-band-70 .front-title span,
+.score-band-70 .tap-hint,
+.score-band-60 .front-title span,
+.score-band-60 .tap-hint{
+  color:rgba(20,35,20,.80)!important;
+}
+
+/* Topbjælken beholder scorefarven som baggrund, men navigationen skal stadig være tydelig. */
+.summary-card.score-band-100 .day-nav,
+.summary-card.score-band-90 .day-nav,
+.summary-card.score-band-70 .day-nav,
+.summary-card.score-band-60 .day-nav,
+.summary-card.score-band-100 .week-toggle-btn,
+.summary-card.score-band-90 .week-toggle-btn,
+.summary-card.score-band-70 .week-toggle-btn,
+.summary-card.score-band-60 .week-toggle-btn{
+  color:#132315;
+  border-color:rgba(20,40,20,.28);
+  background:rgba(255,255,255,.28);
+}
+
+/* På ugevisningen er kortets klasse den primære baggrund. */
+.week-day.score-band-100,
+.week-day.score-band-90,
+.week-day.score-band-80,
+.week-day.score-band-70,
+.week-day.score-band-60,
+.week-day.score-band-50,
+.week-day.score-band-40,
+.week-day.score-band-30,
+.week-day.score-band-20,
+.week-day.score-band-10,
+.week-day.score-band-0{
+  border-color:rgba(255,255,255,.22);
+}
+
+@media(max-width:1100px){
+  .week-day-name{font-size:25px}
+  .week-day-icon{font-size:52px}
+  .week-day-score{font-size:34px}
+  .week-day-score small{font-size:18px}
+}
+
+@media(max-width:900px),(orientation:portrait){
+  .week-day{
+    padding:18px 14px;
+  }
+  .week-day-name{font-size:24px}
+  .week-day-icon{font-size:40px}
+  .week-day-score{font-size:28px}
+  .week-day-score small{font-size:15px}
+}
