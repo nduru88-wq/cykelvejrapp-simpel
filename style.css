@@ -721,4 +721,36 @@ dialog{border:0;padding:0;background:transparent;max-width:min(700px,92vw);width
   .week-day-icon{font-size:40px}
   .week-day-score{font-size:28px}
   .week-day-score small{font-size:15px}
+
+  /* FAST TOPBJÆLKE – ændrer ikke farve efter score */
+#summary.summary-card,
+#summary.summary-card.score-band-100,
+#summary.summary-card.score-band-90,
+#summary.summary-card.score-band-80,
+#summary.summary-card.score-band-70,
+#summary.summary-card.score-band-60,
+#summary.summary-card.score-band-50,
+#summary.summary-card.score-band-40,
+#summary.summary-card.score-band-30,
+#summary.summary-card.score-band-20,
+#summary.summary-card.score-band-10,
+#summary.summary-card.score-band-0,
+#summary.summary-card.score-band-neutral {
+  background: linear-gradient(135deg, #08131e, #10283a) !important;
+  color: #f5f9fc !important;
+}
+
+#summary .summary-title,
+#summary .overall-text,
+#summary .summary-details,
+#summary .today {
+  color: #f5f9fc !important;
+}
+
+#summary .day-nav,
+#summary .week-toggle-btn {
+  color: #f5f9fc !important;
+  border-color: rgba(255,255,255,.22) !important;
+  background: rgba(255,255,255,.08) !important;
+}
 }
