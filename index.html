@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#17324d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Cykelvejr">
+  <title>Cykelvejr</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" href="./style.css?v=20260816-uge2">
+</head>
+<body>
+<main class="app-shell">
+
+  <section id="summary" class="summary-card summary-neutral">
+    <button id="prevDayBtn" class="day-nav day-nav-prev" type="button" aria-label="Forrige dag">
+      <span class="day-nav-arrow">←</span>
+      <span>Forrige dag</span>
+    </button>
+
+    <div class="summary-center">
+      <div class="summary-mainline">
+        <div class="summary-left">
+          <div id="weatherAnimation" class="weather-animation sun" aria-hidden="true">
+            <div class="sun-disc">☀️</div>
+            <div class="rain-cloud">🌧️</div>
+            <div class="wind-symbol">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="snow-symbol">🌨️</div>
+          </div>
+
+          <div class="summary-copy">
+            <div class="summary-title">DAGENS SAMLEDE VURDERING - NØRHOLM - SØNDERHOLM - AALBORG SV</div>
+            <div class="summary-score-row">
+              <div id="overallText" class="overall-text">Henter vejret…</div>
+              <div id="today" class="today today-large"></div>
+            </div>
+            <div id="summaryDetails" class="summary-details">Temperatur, vind og nedbør vurderes for dagens cykelture.</div>
+          </div>
+        </div>
+
+        <button id="weekToggleBtn" class="week-toggle-btn" type="button">Vis hele uge</button>
+      </div>
+    </div>
+
+    <button id="nextDayBtn" class="day-nav day-nav-next" type="button" aria-label="Næste dag">
+      <span>Næste dag</span>
+      <span class="day-nav-arrow">→</span>
+    </button>
+  </section>
+
+  <section id="weekView" class="week-view hidden" aria-live="polite">
+    <div class="week-view-head">
+      <div>
+        <div class="week-view-kicker">UGENS CYKELVEJR · MANDAG–FREDAG</div>
+        <div id="weekTitle" class="week-view-title">Ugeoversigt</div>
+      </div>
+      <button id="dayToggleBtn" class="week-toggle-btn week-back-btn" type="button">Tilbage til valgt dag</button>
+    </div>
+
+    <div id="weekDays" class="week-cards"></div>
+  </section>
+
+  <section id="profilesSection" class="profiles">
+    <article class="profile-card">
+      <div class="profile-head">
+        <div>
+          <div class="profile-name">Peter</div>
+          <div class="route">Nørholm ↔ Aalborg SV</div>
+        </div>
+        <div id="peterBadge" class="score-badge neutral">–</div>
+      </div>
+
+      <div class="trip-grid">
+        <div class="trip trip-shell trip-neutral" id="peterMorningCard">
+          <div class="trip-overlay" id="peterMorningOverlay" data-show-details="peterMorning">
+            <div class="front-title">
+              <strong>Peter · Til arbejde</strong>
+              <span>Nørholm → Aalborg SV</span>
+            </div>
+
+            <div class="front-scene">
+              <div class="static-weather" id="peterMorningFx"></div>
+              <img
+                class="static-rider peter facing-right"
+                src="./assets/peter-cykel.png"
+                alt=""
+                aria-hidden="true"
+              >
+            </div>
+
+            <div class="front-score">
+              <span id="peterMorningScore">–</span>
+              <small id="peterMorningLabel">Henter…</small>
+            </div>
+            <div class="tap-hint">Tryk for detaljer</div>
+          </div>
+
+          <div class="trip-details hidden" id="peterMorningDetails">
+            <div class="detail-head">
+              <strong>Peter · Til arbejde</strong>
+              <span>Nørholm → Aalborg SV · 07.15–08.15</span>
+            </div>
+            <div id="peterMorning" class="weather-grid placeholder">Henter…</div>
+            <button class="back-btn" data-back="peterMorning">← Tilbage til cykelturen</button>
+          </div>
+        </div>
+
+        <div class="trip trip-shell trip-neutral" id="peterHomeCard">
+          <div class="trip-overlay" id="peterHomeOverlay" data-show-details="peterHome">
+            <div class="front-title">
+              <strong>Peter · Hjem</strong>
+              <span>Aalborg SV → Nørholm</span>
+            </div>
+
+            <div class="front-scene">
+              <div class="static-weather" id="peterHomeFx"></div>
+              <img
+                class="static-rider peter facing-left"
+                src="./assets/peter-cykel.png"
+                alt=""
+                aria-hidden="true"
+              >
+            </div>
+
+            <div class="front-score">
+              <span id="peterHomeScore">–</span>
+              <small id="peterHomeLabel">Henter…</small>
+            </div>
+            <div class="tap-hint">Tryk for detaljer</div>
+          </div>
+
+          <div class="trip-details hidden" id="peterHomeDetails">
+            <div class="detail-head">
+              <strong>Peter · Hjem</strong>
+              <span>Aalborg SV → Nørholm · 13.00–16.00</span>
+            </div>
+            <div id="peterHome" class="weather-grid placeholder">Henter…</div>
+            <button class="back-btn" data-back="peterHome">← Tilbage til cykelturen</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="clothes-btn" data-clothes="peter">🧥 Hvad skal jeg tage på?</button>
+    </article>
+
+    <article class="profile-card">
+      <div class="profile-head">
+        <div>
+          <div class="profile-name">Charlie</div>
+          <div class="route">Nørholm ↔ Sønderholm</div>
+        </div>
+        <div id="sonBadge" class="score-badge neutral">–</div>
+      </div>
+
+      <div class="trip-grid">
+        <div class="trip trip-shell trip-neutral" id="sonMorningCard">
+          <div class="trip-overlay" id="sonMorningOverlay" data-show-details="sonMorning">
+            <div class="front-title">
+              <strong>Charlie · Til skole</strong>
+              <span>Nørholm → Sønderholm</span>
+            </div>
+
+            <div class="front-scene">
+              <div class="static-weather" id="sonMorningFx"></div>
+              <img
+                class="static-rider charlie facing-right"
+                src="./assets/charlie-cykel.png"
+                alt=""
+                aria-hidden="true"
+              >
+            </div>
+
+            <div class="front-score">
+              <span id="sonMorningScore">–</span>
+              <small id="sonMorningLabel">Henter…</small>
+            </div>
+            <div class="tap-hint">Tryk for detaljer</div>
+          </div>
+
+          <div class="trip-details hidden" id="sonMorningDetails">
+            <div class="detail-head">
+              <strong>Charlie · Til skole</strong>
+              <span>Nørholm → Sønderholm · 07.15–08.15</span>
+            </div>
+            <div id="sonMorning" class="weather-grid placeholder">Henter…</div>
+            <button class="back-btn" data-back="sonMorning">← Tilbage til cykelturen</button>
+          </div>
+        </div>
+
+        <div class="trip trip-shell trip-neutral" id="sonHomeCard">
+          <div class="trip-overlay" id="sonHomeOverlay" data-show-details="sonHome">
+            <div class="front-title">
+              <strong>Charlie · Hjem</strong>
+              <span>Sønderholm → Nørholm</span>
+            </div>
+
+            <div class="front-scene">
+              <div class="static-weather" id="sonHomeFx"></div>
+              <img
+                class="static-rider charlie facing-left"
+                src="./assets/charlie-cykel.png"
+                alt=""
+                aria-hidden="true"
+              >
+            </div>
+
+            <div class="front-score">
+              <span id="sonHomeScore">–</span>
+              <small id="sonHomeLabel">Henter…</small>
+            </div>
+            <div class="tap-hint">Tryk for detaljer</div>
+          </div>
+
+          <div class="trip-details hidden" id="sonHomeDetails">
+            <div class="detail-head">
+              <strong>Charlie · Hjem</strong>
+              <span>Sønderholm → Nørholm · 13.00–16.00</span>
+            </div>
+            <div id="sonHome" class="weather-grid placeholder">Henter…</div>
+            <button class="back-btn" data-back="sonHome">← Tilbage til cykelturen</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="clothes-btn" data-clothes="son">🧥 Hvad skal jeg tage på?</button>
+    </article>
+  </section>
+
+  <footer>
+    <span id="updated">Ikke opdateret endnu</span>
+    <button id="refreshBtn" class="refresh-btn">↻ Opdater vejret</button>
+    <span>Vejrdata: Open-Meteo</span>
+  </footer>
+</main>
+
+<dialog id="clothesDialog">
+  <div class="dialog-card">
+    <button id="closeDialog" class="close-btn">×</button>
+    <div class="small-label">PÅKLÆDNINGSFORSLAG</div>
+    <h2 id="clothesTitle"></h2>
+    <div id="clothesWeather" class="clothes-weather"></div>
+    <div id="clothesContent" class="clothes-content"></div>
+  </div>
+</dialog>
+
+<script src="./app.js?v=20260816-uge2"></script>
+</body>
+</html>
